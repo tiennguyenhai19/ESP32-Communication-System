@@ -1,0 +1,6 @@
+<PARSED TEXT FOR SHEET: 1 / 1 TABS
+TAB NAME: per_message_results.csv>index,message,raw_bytes,raw_bits,huffman_bits,hamming_bits,payload_bytes,header_bytes,frame_bytes,CR_Huffman_raw_over_huffman,CR_payload_raw_over_hamming_bits,CR_frame_rawbits_over_framebits,UART_8N1_efficiency_pct,clean_roundtrip
+0,ESP32 UART TEST MESSAGE 001,27,216,118,210,27,13,40,1.8305,1.0286,0.675,54.0,PASS
+1,HUFFMAN SOURCE CODING TEST,26,208,109,196,25,13,38,1.9083,1.0612,0.6842,54.74,PASS
+2,"HAMMING 7,4 WITH BSC NOISE",26,208,120,210,27,13,40,1.7333,0.9905,0.65,52.0,PASS
+3,BER CORRECTION AND DATA FRAME,29,232,117,210,27,13,40,1.9829,1.1048,0.725,58.0,PASS

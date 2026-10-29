@@ -1,0 +1,43 @@
+ESP32 HUFFMAN + HAMMING(7,4) + BSC SOFTWARE SIMULATION
+Huffman codebook derived from the shared TRAINING_CORPUS in common.h
+UART wires are assumed error-free; BSC affects only Hamming payload bits.
+
+Hamming unit test: PASS 128/128 cases (16 nibbles x no-error + 7 single-bit positions).
+
+PER-MESSAGE ENCODING AND CLEAN-CHANNEL RESULTS
+Message | Raw bits | Huff bits | Hamming bits | Payload bytes | Frame bytes | CR_Huff | CR_Frame | Clean decode
+ESP32 UART TEST MESSAGE 001 | 216 | 118 | 210 | 27 | 40 | 1.831 | 0.675 | PASS
+HUFFMAN SOURCE CODING TEST | 208 | 109 | 196 | 25 | 38 | 1.908 | 0.684 | PASS
+HAMMING 7,4 WITH BSC NOISE | 208 | 120 | 210 | 27 | 40 | 1.733 | 0.650 | PASS
+BER CORRECTION AND DATA FRAME | 232 | 117 | 210 | 27 | 40 | 1.983 | 0.725 | PASS
+
+DETERMINISTIC PACKET TRACE: p=0.020, seed=12345
+SEQ | Original text | raw/huff/ham bits | flips | syndrome flags | exact recovered | CRC
+  1 | ESP32 UART TEST MESSAGE 001 | 216/118/210 | 6 | 6 | True  | PASS
+  2 | HUFFMAN SOURCE CODING TEST | 208/109/196 | 5 | 5 | True  | PASS
+  3 | HAMMING 7,4 WITH BSC NOISE | 208/120/210 | 5 | 5 | True  | PASS
+  4 | BER CORRECTION AND DATA FRAME | 232/117/210 | 8 | 5 | False | FAIL
+  payload before BSC: 33 C2 19 6F FA 59 B3 E1 FC 78 F7 95 59 A5 86 AA 1A A5 4C ED 33 54 94 B7 0E 00 00
+  payload after  BSC: 33 C2 19 EF FA 59 B3 E1 FC 78 F7 95 59 A5 86 A8 5A 85 4C ED 33 54 94 3F 0E 14 00
+  flipped bit indexes (0-based, payload-only): [24, 126, 129, 138, 184, 188, 203, 205]
+  receiver decoded: None
+
+MONTE CARLO PACKET SUCCESS (10,000 frames per p; fixed seed per p; messages round-robin)
+p | BER observed | CRC PASS count | exact+CRC pass | fail | success % | avg syndrome flags/frame
+0.000 | 0.00000 | 10000 | 10000 | 0 | 100.000% | 0.000
+0.001 | 0.00102 | 9995 | 9995 | 5 | 99.950% | 0.210
+0.005 | 0.00501 | 9859 | 9859 | 141 | 98.590% | 1.020
+0.010 | 0.00987 | 9394 | 9394 | 606 | 93.940% | 1.974
+0.020 | 0.01992 | 7969 | 7969 | 2031 | 79.690% | 3.876
+0.030 | 0.02991 | 6021 | 6021 | 3979 | 60.210% | 5.640
+0.050 | 0.04981 | 2722 | 2722 | 7278 | 27.220% | 8.854
+0.100 | 0.09990 | 97 | 97 | 9903 | 0.970% | 15.193
+
+AGGREGATED FOUR-MESSAGE METRICS (one of each test message)
+Raw data: 108 bytes (864 bits)
+Huffman: 464 bits; source saving = 46.30%
+Hamming payload: 826 bits; transmitted payload bytes=106
+Full frame bytes (13-byte header each): 158; raw/frame ratio=0.684; frame expansion=46.30%
+Raw information bits / UART line bits (8N1 uses 10 line bits/byte): 0.547
+
+Interpretation: results are algorithmic software simulation, not a measurement from physical ESP32 boards.
